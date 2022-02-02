@@ -3,7 +3,7 @@
 </div>
 
 ## Sobre o Projeto
-Contest é um sistema da Universidade Federal do Ceará do campus de Quixadá, para controle de eventos, submisões de trabalhos academicos e envio de certificações.
+Contest é um sistema da Universidade Federal do Ceará do campus de Quixadá, para controle de eventos, submisões de trabalhos academicos e envio de certificações
 
 ## Objetivo do Experimento
 O experimento tem como objetivo identificar os code smell do sistema Contest com JSpiRIT e a ferramenta Understand para verificação das métricas dos atributos de qualidade: Coesão, Acoplamento, Complexidade, Herança e Tamanho.

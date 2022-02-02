@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ufc.quixada.npi.contest.model.*;
 import ufc.quixada.npi.contest.repository.TrabalhoRepository;
+import ufc.quixada.npi.contest.util.GetEvento;
+import ufc.quixada.npi.contest.util.GetPessoa;
 import ufc.quixada.npi.contest.util.PessoaLogadaUtil;
 
 import java.util.ArrayList;
@@ -17,6 +19,11 @@ import java.util.List;
 
 @Service
 public class TrabalhoService {
+	
+	private Avaliacao APROVADO = Avaliacao.APROVADO;
+	private Avaliacao RESSALVAS = Avaliacao.RESSALVAS;
+	private Avaliacao REPROVADO = Avaliacao.REPROVADO;
+	private Avaliacao NAO_REVISADO = Avaliacao.NAO_REVISADO;
 
 	@Autowired
 	private TrabalhoRepository trabalhoRepository;
@@ -43,7 +50,7 @@ public class TrabalhoService {
 	}
 
 	public List<Trabalho> getTrabalhosSemSessaoNoEvento(Evento evento) {
-		return trabalhoRepository.getTrabalhosSemSessaoNoEvento(evento.getId());
+		return trabalhoRepository.getTrabalhosSemSessaoNoEvento(GetEvento.getId(evento));
 	}
 
 	public List<Trabalho> getTrabalhosTrilha(Trilha trilha) {
@@ -59,7 +66,7 @@ public class TrabalhoService {
 		}
 		if(trabalho.getCoautores() != null && !trabalho.getCoautores().isEmpty()) {
 			for(Pessoa pessoa : trabalho.getCoautores()) {
-				emailService.enviarEmail("Contest", "Submissão de trabalho", pessoa.getEmail(), getCorpoEmailSubmisaoTrabalho(trabalho.getTitulo(), trabalho.getEvento().getNome()));
+				emailService.enviarEmail("Contest", "Submissão de trabalho", GetPessoa.getEmail(pessoa), getCorpoEmailSubmisaoTrabalho(trabalho.getTitulo(), trabalho.getEvento().getNome()));
 			}
 		}
 	}
@@ -101,8 +108,10 @@ public class TrabalhoService {
 		int numeroDeReprovacao = 0;
 		int numeroDeRessalvas = 0;
 		int numeroRevisoes = 0;
-
-		List<Revisao> revisoes = trabalho.getRevisoes();
+		
+		TrabalhoProduct trabalhoProduct = trabalho.getTrabalhoProduct();
+		List<Revisao> revisoes = trabalhoProduct.getRevisoes();
+		// List<Revisao> revisoes = trabalho.getRevisoes();
 
 		if (revisoes != null) {
 			numeroRevisoes = revisoes.size();
@@ -146,8 +155,10 @@ public class TrabalhoService {
 
 		List<String> resultadoAvaliacoes = new ArrayList<>();
 
+		TrabalhoProduct trabalhoProduct = trabalho.getTrabalhoProduct();
+		List<Revisao> revisoes = trabalhoProduct.getRevisoes();
 		StringBuilder bld = new StringBuilder();
-		for (Revisao revisao : trabalho.getRevisoes()) {
+		for (Revisao revisao : revisoes) {
 
 			conteudo = revisao.getConteudo().substring(1, revisao.getConteudo().length() - 1);
 			bld.append("REVISOR : " + revisao.getRevisor().getNome().toUpperCase() + " , TRABALHO: "
@@ -239,13 +250,13 @@ public class TrabalhoService {
 
 	// OK
 	public List<Trabalho> getTrabalhosRevisados(Evento evento) {
-		return trabalhoRepository.getTrabalhosByAvaliacao(evento, Arrays.asList(Avaliacao.APROVADO, Avaliacao.REPROVADO, Avaliacao.RESSALVAS));
+		return trabalhoRepository.getTrabalhosByAvaliacao(evento, Arrays.asList(APROVADO, REPROVADO, RESSALVAS));
 	}
 
 	// OK
 	public void alocarRevisores(Trabalho trabalho, List<Pessoa> revisores) {
 		for (Pessoa pessoa : revisores) {
-			if (trabalho.isRevisor(pessoa)) {
+			if (trabalho.getTrabalhoProduct().isRevisor(pessoa)) {
 				continue;
 			}
 			Revisao revisao = new Revisao();

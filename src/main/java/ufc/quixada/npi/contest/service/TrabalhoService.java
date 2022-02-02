@@ -59,16 +59,33 @@ public class TrabalhoService {
 
 	public void adicionarTrabalho(Trabalho trabalho) {
 		trabalhoRepository.save(trabalho);
+		String title = trabalho.getTitulo();
+		String nameEvento = trabalho.getEvento().getNome();
 
-		emailService.enviarEmail("Contest", "Submissão de trabalho", trabalho.getAutor().getEmail(), getCorpoEmailSubmisaoTrabalho(trabalho.getTitulo(), trabalho.getEvento().getNome()));
-		if (trabalho.getOrientador() != null) {
-			emailService.enviarEmail("Contest", "Submissão de trabalho", trabalho.getOrientador().getEmail(), getCorpoEmailSubmisaoTrabalho(trabalho.getTitulo(), trabalho.getEvento().getNome()));
+		sendEmail(trabalho.getAutor().getEmail(), title, nameEvento);
+		
+		sendEmailOrientador(trabalho, title, nameEvento);
+		
+		sendEmailCoautores(trabalho, title, nameEvento);
+	}
+	
+	private void sendEmailOrientador(Trabalho trabalho, String title, String nameEvento) {
+		Pessoa orientador = trabalho.getOrientador();
+		if (orientador != null) {
+			sendEmail(orientador.getEmail(), title, nameEvento);
 		}
+
 		if(trabalho.getCoautores() != null && !trabalho.getCoautores().isEmpty()) {
 			for(Pessoa pessoa : trabalho.getCoautores()) {
 				emailService.enviarEmail("Contest", "Submissão de trabalho", GetPessoa.getEmail(pessoa), getCorpoEmailSubmisaoTrabalho(trabalho.getTitulo(), trabalho.getEvento().getNome()));
 			}
+
+	
 		}
+	}
+	
+	private void sendEmail(String email, String title, String name) {
+		emailService.enviarEmail("Contest", "Submissão de trabalho", email, getCorpoEmailSubmisaoTrabalho(title, name));
 	}
 
 	private String getCorpoEmailSubmisaoTrabalho(String nomeTrabalho, String nomeEvento) {
@@ -147,7 +164,7 @@ public class TrabalhoService {
 
 		return Avaliacao.MODERACAO;
 	}
-
+/*
 	public List<String> pegarConteudo(Trabalho trabalho) {
 
 		String conteudoAux;
@@ -160,7 +177,9 @@ public class TrabalhoService {
 		StringBuilder bld = new StringBuilder();
 		for (Revisao revisao : revisoes) {
 
+
 			conteudo = revisao.getConteudo().substring(1, revisao.getConteudo().length() - 1);
+
 			bld.append("REVISOR : " + revisao.getRevisor().getNome().toUpperCase() + " , TRABALHO: "
 					+ trabalho.getId().toString());
 
@@ -168,9 +187,7 @@ public class TrabalhoService {
 				if (conteudo.contains(",")) {
 					conteudoAux = conteudo.substring(0, conteudo.indexOf(','));
 					if (!conteudoAux.contentEquals("comentarios")) {
-						bld.append((" ," + (conteudoAux.replaceAll("\"", " ").replaceAll("_", " ")
-								.replaceAll("avaliacao", "AVALIAÇÃO").replaceAll("OTIMO", "ÓTIMO")
-								.replaceAll("merito", "MÉRITO").replaceAll("relevancia", "RELEVÂNCIA")).toUpperCase()));
+						bld.append((" ," + contentFormat(conteudoAux)));
 						conteudoAux = conteudo.substring(conteudo.indexOf(',') + 1);
 						conteudo = conteudoAux;
 					}
@@ -184,7 +201,13 @@ public class TrabalhoService {
 
 		return resultadoAvaliacoes;
 	}
-
+	
+	private String contentFormat(String conteudo) {
+		return conteudo.replaceAll("\"", " ").replaceAll("_", " ")
+				.replaceAll("avaliacao", "AVALIAÇÃO").replaceAll("OTIMO", "ÓTIMO")
+				.replaceAll("merito", "MÉRITO").replaceAll("relevancia", "RELEVÂNCIA").toUpperCase();
+	}
+*/
 	public List<Trabalho> buscarTodosTrabalhosDaSessao(Long idSessao) {
 		return trabalhoRepository.findTrabalhoBySessaoId(idSessao);
 

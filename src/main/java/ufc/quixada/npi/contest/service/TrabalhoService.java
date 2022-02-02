@@ -75,12 +75,13 @@ public class TrabalhoService {
 			sendEmail(orientador.getEmail(), title, nameEvento);
 		}
 
-		if(trabalho.getCoautores() != null && !trabalho.getCoautores().isEmpty()) {
-			for(Pessoa pessoa : trabalho.getCoautores()) {
-				emailService.enviarEmail("Contest", "Submissão de trabalho", GetPessoa.getEmail(pessoa), getCorpoEmailSubmisaoTrabalho(trabalho.getTitulo(), trabalho.getEvento().getNome()));
-			}
-
+	}
 	
+	private void sendEmailCoautores(Trabalho trabalho, String title, String nameEvento) {
+		List<Pessoa> coautores = trabalho.getCoautores();
+		if(coautores != null && !coautores.isEmpty()) {
+			for(Pessoa pessoa : coautores) sendEmail(GetPessoa.getEmail(pessoa), title, nameEvento);
+
 		}
 	}
 	

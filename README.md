@@ -1,7 +1,3 @@
-<div align="center">
-   <img alt="Logo contest" src="./docs/assets/logotipo.png" style="height: 200px;">
-</div>
-
 ## Sobre o Projeto
 Contest é um sistema da Universidade Federal do Ceará do campus de Quixadá, para controle de eventos, submisões de trabalhos academicos e envio de certificações
 
@@ -79,5 +75,3 @@ Como resultado final das métricas de inferência da qualidade do software, pode
 </div>
 </br> </br>
 
-## Analise mais detalhada do experimento
-<a href="./docs/Relatorio Contest - Qualidade Software - Entrega final.pdf">Relatorio das refatorações</a>

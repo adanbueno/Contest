@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ufc.quixada.npi.contest.model.*;
 import ufc.quixada.npi.contest.service.*;
+import ufc.quixada.npi.contest.util.GetEvento;
 import ufc.quixada.npi.contest.util.PessoaLogadaUtil;
 import ufc.quixada.npi.contest.validator.ContestException;
 
@@ -94,7 +95,7 @@ public class EventoController {
 		} catch (ContestException ex) {
 			redirectAttributes.addFlashAttribute("error", ex.getMessage());
 		}
-		return "redirect:/evento/" + evento.getId() + "/detalhe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/detalhe";
 	}
 
     // OK
@@ -119,7 +120,7 @@ public class EventoController {
         sessao.setEvento(evento);
         sessaoService.addOrUpdate(sessao);
         redirectAttributes.addFlashAttribute("info", "Sessão cadastrada com sucesso");
-        return "redirect:/evento/" + sessao.getEvento().getId() + "/sessoes";
+        return "redirect:/evento/" + GetEvento.getId(sessao.getEvento()) + "/sessoes";
     }
 
     // OK
@@ -176,7 +177,7 @@ public class EventoController {
 		trilhaService.adicionarOuAtualizarTrilha(evento, trilha);
 		redirectAttributes.addFlashAttribute("tab", "trilha");
 		redirectAttributes.addFlashAttribute("info", "Trilha adicionada com sucesso");
-		return "redirect:/evento/" + evento.getId() + "/detalhe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/detalhe";
 	}
 
 	// OK
@@ -187,7 +188,7 @@ public class EventoController {
 		redirectAttributes.addFlashAttribute("tab", "trilhas");
 		redirectAttributes.addFlashAttribute("info", "Trilha excluída com sucesso");
 		trilhaService.excluir(evento, trilha);
-		return "redirect:/evento/" + evento.getId() + "/detalhe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/detalhe";
 	}
 
 	// OK
@@ -195,7 +196,10 @@ public class EventoController {
 	@RequestMapping(value = "/{eventoId}/modalidade-submissao", method = RequestMethod.POST)
 	public String adicionarModalidadeSubmissao(Model model, @PathVariable("eventoId") Evento evento,
 			@RequestParam("nome") String nomeModalidade, RedirectAttributes redirectAttributes) {
-		evento.addModalidadeSubmissao(new Modalidade(nomeModalidade));
+		List<Modalidade> modalidadeEvento = evento.getModalidadesSubmissao();
+		modalidadeEvento.add(new Modalidade(nomeModalidade));
+		evento.setModalidadesSubmissao(modalidadeEvento);
+		// evento.addModalidadeSubmissao(new Modalidade(nomeModalidade));
 		try {
 			eventoService.adicionarOuAtualizarEvento(evento);
             redirectAttributes.addFlashAttribute("info", "Modalidade de submissão adicionada com sucesso");
@@ -203,7 +207,7 @@ public class EventoController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
 		}
         redirectAttributes.addFlashAttribute("tab", "modalidades-submissao");
-		return "redirect:/evento/" + evento.getId() + "/detalhe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/detalhe";
 	}
 
 	// OK
@@ -211,7 +215,10 @@ public class EventoController {
 	@RequestMapping(value = "/{eventoId}/excluir-modalidade-submissao/{modalidadeId}")
 	public String excluirModalidadeSubmissao(Model model, @PathVariable("eventoId") Evento evento,
 			@PathVariable("modalidadeId") Modalidade modalidade, RedirectAttributes redirectAttributes) {
-		evento.removeModalidadeSubmissao(modalidade);
+		List<Modalidade> modalidadeEvento = evento.getModalidadesSubmissao();
+		modalidadeEvento.remove(modalidade);
+		evento.setModalidadesSubmissao(modalidadeEvento);
+		//evento.removeModalidadeSubmissao(modalidade);
 		try {
 			eventoService.adicionarOuAtualizarEvento(evento);
 			redirectAttributes.addFlashAttribute("info", "Modalidade de submissão excluída com sucesso");
@@ -219,7 +226,7 @@ public class EventoController {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 		}
 		redirectAttributes.addFlashAttribute("tab", "modalidades-submissao");
-		return "redirect:/evento/" + evento.getId() + "/detalhe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/detalhe";
 	}
 
 	// OK
@@ -227,7 +234,10 @@ public class EventoController {
 	@RequestMapping(value = "/{eventoId}/modalidade-apresentacao", method = RequestMethod.POST)
 	public String adicionarModalidadeApresentacao(Model model, @PathVariable("eventoId") Evento evento,
 											   @RequestParam("nome") String nomeModalidade, RedirectAttributes redirectAttributes) {
-		evento.addModalidadeApresentacao(new Modalidade(nomeModalidade));
+		List<Modalidade> modalidadesApresentacao = evento.getModalidadesApresentacao();
+		modalidadesApresentacao.add(new Modalidade(nomeModalidade));
+		evento.setModalidadesApresentacao(modalidadesApresentacao);
+		//evento.addModalidadeApresentacao(new Modalidade(nomeModalidade));
 		try {
 			eventoService.adicionarOuAtualizarEvento(evento);
 			redirectAttributes.addFlashAttribute("info", "Modalidade de apresentação adicionada com sucesso");
@@ -235,7 +245,7 @@ public class EventoController {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 		}
 		redirectAttributes.addFlashAttribute("tab", "modalidades-apresentacao");
-		return "redirect:/evento/" + evento.getId() + "/detalhe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/detalhe";
 	}
 
 	// OK
@@ -243,7 +253,10 @@ public class EventoController {
 	@RequestMapping(value = "/{eventoId}/excluir-modalidade-apresentacao/{modalidadeId}")
 	public String excluirModalidadeApresentacao(Model model, @PathVariable("eventoId") Evento evento,
 											 @PathVariable("modalidadeId") Modalidade modalidade, RedirectAttributes redirectAttributes) {
-		evento.removeModalidadeApresentacao(modalidade);
+		List<Modalidade> modalidadesApresentacao = evento.getModalidadesApresentacao();
+		modalidadesApresentacao.remove(modalidade);
+		evento.setModalidadesApresentacao(modalidadesApresentacao);
+		// evento.removeModalidadeApresentacao(modalidade);
 		try {
 			eventoService.adicionarOuAtualizarEvento(evento);
 			redirectAttributes.addFlashAttribute("info", "Modalidade de apresentação excluída com sucesso");
@@ -251,7 +264,7 @@ public class EventoController {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 		}
 		redirectAttributes.addFlashAttribute("tab", "modalidades-apresentacao");
-		return "redirect:/evento/" + evento.getId() + "/detalhe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/detalhe";
 	}
 
 	// OK
@@ -274,7 +287,7 @@ public class EventoController {
 
 		eventoService.adicionarOrganizador(evento, pessoa);
 
-		return "redirect:/evento/" + evento.getId() + "/equipe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/equipe";
 	}
 
 	// OK
@@ -287,7 +300,7 @@ public class EventoController {
 		redirectAttributes.addFlashAttribute("info", "Organizador excluído com sucesso");
 		eventoService.excluirOrganizador(evento, pessoa);
 
-		return "redirect:/evento/" + evento.getId() + "/equipe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/equipe";
 	}
 
 	// OK
@@ -301,7 +314,7 @@ public class EventoController {
 
 		eventoService.adicionarRevisor(evento, pessoa);
 
-		return "redirect:/evento/" + evento.getId() + "/equipe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/equipe";
 	}
 
 	// OK
@@ -315,7 +328,7 @@ public class EventoController {
 
 		eventoService.excluirRevisor(evento, pessoa);
 
-		return "redirect:/evento/" + evento.getId() + "/equipe";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/equipe";
 	}
 
 	// OK
@@ -331,7 +344,11 @@ public class EventoController {
 	@RequestMapping(value = "/{eventoId}/atividades")
 	public String indexAtividades(Model model, @PathVariable("eventoId") Evento evento) {
 		model.addAttribute(EVENTO, evento);
+
+		List<Atividade> atividades = atividadeService.getAtividadePorEvento(GetEvento.getId(evento));
+
 		List<Atividade> atividades = atividadeService.getAtividadePorEvento(evento.getId());
+
 		
 		model = construcaoModel(model, atividades, evento);
 		
@@ -372,7 +389,7 @@ public class EventoController {
 			redirectAttributes.addFlashAttribute("sorteado", participantes.get(new Random().nextInt(participantes.size())));
 			redirectAttributes.addFlashAttribute("gif", new Random().nextInt(10));
 		}
-		return "redirect:/evento/" + evento.getId() + "/atividades";
+		return "redirect:/evento/" + GetEvento.getId(evento) + "/atividades";
 
 	}
 	

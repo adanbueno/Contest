@@ -61,6 +61,7 @@ public class EventoService {
 	public void periodoSubimissao(Evento evento) throws ContestException {
 		if (evento.getTerminoSubmissao().before(evento.getInicioSubmissao())){
 			throw new ContestException("O término da submissão deve ser posterior ao início da submissão");
+
 		}
 	}
 	
@@ -68,12 +69,14 @@ public class EventoService {
 		if (!evento.getPrazoNotificacao().after(evento.getTerminoSubmissao())) {
 			throw new ContestException("O prazo de notificação deve ser posterior ao término de submissão");
 
+
 		}
 	}
 	
 	public void cameraReady(Evento evento) throws ContestException {
 		if (!evento.getCameraReady().after(evento.getPrazoNotificacao())) {
 			throw new ContestException("O camera ready deve ser posterior ao prazo de notificação");
+
 		}
 	}
 
@@ -199,7 +202,8 @@ public class EventoService {
 			}
 		}
 
-		emailService.enviarEmail("Contest", "Equipe de organizaÃ§Ã£o", GetPessoa.getEmail(pessoa), "VocÃª foi incluÃ­do(a) na equipe de organizaÃ§Ã£o do evento \"" + evento.getNome() + "\"");
+		emailService.enviarEmail("Contest", "Equipe de organização", GetPessoa.getEmail(pessoa), "Você foi incluído(a) na equipe de organização do evento \"" + evento.getNome() + "\"");
+
 	}
 
 	public void excluirOrganizador(Evento evento, Pessoa pessoa) {
@@ -229,7 +233,8 @@ public class EventoService {
 			}
 		}
 
-		emailService.enviarEmail("Contest", "Equipe de revisÃ£o", GetPessoa.getEmail(pessoa), "VocÃª foi incluÃ­do(a) na equipe de revisÃ£o do evento \"" + evento.getNome() + "\"");
+		emailService.enviarEmail("Contest", "Equipe de revisão", GetPessoa.getEmail(pessoa), "Você foi incluído(a) na equipe de revisão do evento \"" + evento.getNome() + "\"");
+
 	}
 
 	public void excluirRevisor(Evento evento, Pessoa pessoa) {

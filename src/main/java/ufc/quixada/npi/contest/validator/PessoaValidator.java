@@ -31,7 +31,6 @@ public class PessoaValidator implements Validator{
 		Pessoa pessoa = (Pessoa) target;
 		if(pessoa != null){
 			if(GetPessoa.getEmail(pessoa) == null){
-
 				errors.rejectValue(EMAIL, EMAIL_NULL , messageService.getMessage(EMAIL_NULL));
 			}
 			if(getNome(pessoa) == null){
@@ -42,15 +41,9 @@ public class PessoaValidator implements Validator{
 		}
 	}
 	
-
 	private String getNome(Pessoa pessoa) {
 		return pessoa.getNome();
 
-	private String getEmail(Pessoa pessoa) {
-		return pessoa.getEmail();
-	}
-	
-	
 	}
 
 }

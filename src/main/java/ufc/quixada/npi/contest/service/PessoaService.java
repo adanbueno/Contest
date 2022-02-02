@@ -26,7 +26,6 @@ public class PessoaService {
 	
 	public void addOrUpdate(Pessoa pessoa) throws ContestException {
 		Long idPessoa = GetPessoa.getId(pessoa);
-
 		List<Pessoa> pessoas = pessoaRepository.findByCpfOrEmailAndIdIsNot(getCpf(pessoa), getEmail(pessoa), idPessoa == null ? 0 : idPessoa);
 
 		if(!pessoas.isEmpty()) {

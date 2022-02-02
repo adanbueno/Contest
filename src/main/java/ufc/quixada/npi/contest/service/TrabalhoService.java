@@ -74,12 +74,13 @@ public class TrabalhoService {
 		if (orientador != null) {
 			sendEmail(orientador.getEmail(), title, nameEvento);
 		}
-	}
+
+		if(trabalho.getCoautores() != null && !trabalho.getCoautores().isEmpty()) {
+			for(Pessoa pessoa : trabalho.getCoautores()) {
+				emailService.enviarEmail("Contest", "Submissão de trabalho", GetPessoa.getEmail(pessoa), getCorpoEmailSubmisaoTrabalho(trabalho.getTitulo(), trabalho.getEvento().getNome()));
+			}
+
 	
-	private void sendEmailCoautores(Trabalho trabalho, String title, String nameEvento) {
-		List<Pessoa> coautores = trabalho.getCoautores();
-		if(coautores != null && !coautores.isEmpty()) {
-			for(Pessoa pessoa : coautores) sendEmail(GetPessoa.getEmail(pessoa), title, nameEvento);
 		}
 	}
 	
@@ -175,8 +176,10 @@ public class TrabalhoService {
 		List<Revisao> revisoes = trabalhoProduct.getRevisoes();
 		StringBuilder bld = new StringBuilder();
 		for (Revisao revisao : revisoes) {
-			String content = revisao.getConteudo();
-			conteudo = content.substring(1, content.length() - 1);
+
+
+			conteudo = revisao.getConteudo().substring(1, revisao.getConteudo().length() - 1);
+
 			bld.append("REVISOR : " + revisao.getRevisor().getNome().toUpperCase() + " , TRABALHO: "
 					+ trabalho.getId().toString());
 

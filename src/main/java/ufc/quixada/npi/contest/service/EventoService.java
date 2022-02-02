@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import ufc.quixada.npi.contest.model.*;
 import ufc.quixada.npi.contest.repository.EventoRepository;
 import ufc.quixada.npi.contest.repository.TrabalhoRepository;
+import ufc.quixada.npi.contest.util.GetEvento;
+import ufc.quixada.npi.contest.util.GetPessoa;
 import ufc.quixada.npi.contest.validator.ContestException;
 
 import java.util.ArrayList;
@@ -49,14 +51,28 @@ public class EventoService {
 	}
 
 	public void adicionarOuAtualizarEvento(Evento evento) throws ContestException {
+		periodoSubimissao(evento);
+		prazoNotificao(evento);
+		cameraReady(evento);
+		
+		eventoRepository.save(evento);
+	}
+	
+	public void periodoSubimissao(Evento evento) throws ContestException {
 		if (evento.getTerminoSubmissao().before(evento.getInicioSubmissao())){
-			throw new ContestException("O término da submissão deve ser posterior ao início da submissão");
-		} else if (!evento.getPrazoNotificacao().after(evento.getTerminoSubmissao())) {
-			throw new ContestException("O prazo de notificação deve ser posterior ao término de submissão");
-		} else if (!evento.getCameraReady().after(evento.getPrazoNotificacao())) {
-			throw new ContestException("O camera ready deve ser posterior ao prazo de notificação");
-		} else {
-			eventoRepository.save(evento);
+			throw new ContestException("O t�rmino da submiss�o deve ser posterior ao in�cio da submiss�o");
+		}
+	}
+	
+	public void prazoNotificao(Evento evento) throws ContestException {
+		if (!evento.getPrazoNotificacao().after(evento.getTerminoSubmissao())) {
+			throw new ContestException("O prazo de notifica��o deve ser posterior ao t�rmino de submiss�o");
+		}
+	}
+	
+	public void cameraReady(Evento evento) throws ContestException {
+		if (!evento.getCameraReady().after(evento.getPrazoNotificacao())) {
+			throw new ContestException("O camera ready deve ser posterior ao prazo de notifica��o");
 		}
 	}
 
@@ -160,8 +176,9 @@ public class EventoService {
 	}
 
 	public boolean notificarPessoaAoAddTrabalho(Evento evento, String email, String corpo) {
-		String assunto = messageService.getMessage(TITULO_EMAIL_ORGANIZADOR) + " " + evento.getNome();
-		String titulo = "[CONTEST] Convite para o Evento: " + evento.getNome();
+		String nameEvento = evento.getNome();
+		String assunto = messageService.getMessage(TITULO_EMAIL_ORGANIZADOR) + " " + nameEvento;
+		String titulo = "[CONTEST] Convite para o Evento: " + nameEvento;
 
 		return emailService.enviarEmail(titulo, assunto, email, corpo);
 	}
@@ -181,12 +198,13 @@ public class EventoService {
 			}
 		}
 
-		emailService.enviarEmail("Contest", "Equipe de organização", pessoa.getEmail(), "Você foi incluído(a) na equipe de organização do evento \"" + evento.getNome() + "\"");
+		emailService.enviarEmail("Contest", "Equipe de organização", GetPessoa.getEmail(pessoa), "Você foi incluído(a) na equipe de organização do evento \"" + evento.getNome() + "\"");
 	}
 
 	public void excluirOrganizador(Evento evento, Pessoa pessoa) {
-		if (null != evento.getOrganizadores()) {
-			evento.getOrganizadores().removeIf(p -> p.getId() == pessoa.getId());
+		List<Pessoa> organizadores = evento.getOrganizadores();
+		if (null != organizadores) {
+			organizadores.removeIf(p -> p == pessoa);
 			try {
 				adicionarOuAtualizarEvento(evento);
 			} catch (ContestException e) {
@@ -210,15 +228,15 @@ public class EventoService {
 			}
 		}
 
-		emailService.enviarEmail("Contest", "Equipe de revisão", pessoa.getEmail(), "Você foi incluído(a) na equipe de revisão do evento \"" + evento.getNome() + "\"");
+		emailService.enviarEmail("Contest", "Equipe de revisão", GetPessoa.getEmail(pessoa), "Você foi incluído(a) na equipe de revisão do evento \"" + evento.getNome() + "\"");
 	}
 
 	public void excluirRevisor(Evento evento, Pessoa pessoa) {
 
-		boolean x = trabalhoRepository.existTrablhoAlocado(evento.getId(), pessoa.getId());
+		boolean x = trabalhoRepository.existTrablhoAlocado(GetEvento.getId(evento), GetPessoa.getId(pessoa));
 		
 		if (null != evento.getRevisores() && !x) {
-			evento.getRevisores().removeIf(p -> p.getId() == pessoa.getId());
+			evento.getRevisores().removeIf(p -> p == pessoa);
 			try {
 				adicionarOuAtualizarEvento(evento);
 			} catch (ContestException e) {

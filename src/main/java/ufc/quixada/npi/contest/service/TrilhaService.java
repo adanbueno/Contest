@@ -37,6 +37,7 @@ public class TrilhaService {
 		String nome = trilha.getNome();
 		if (trilha != null && !nome.isEmpty()) {
 			if (!exists(nome, GetEvento.getId(evento))) {
+
 				return true;
 			}
 		}

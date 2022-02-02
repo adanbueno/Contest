@@ -344,7 +344,11 @@ public class EventoController {
 	@RequestMapping(value = "/{eventoId}/atividades")
 	public String indexAtividades(Model model, @PathVariable("eventoId") Evento evento) {
 		model.addAttribute(EVENTO, evento);
+
 		List<Atividade> atividades = atividadeService.getAtividadePorEvento(GetEvento.getId(evento));
+
+		List<Atividade> atividades = atividadeService.getAtividadePorEvento(evento.getId());
+
 		
 		model = construcaoModel(model, atividades, evento);
 		

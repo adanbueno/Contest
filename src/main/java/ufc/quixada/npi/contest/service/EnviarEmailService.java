@@ -51,9 +51,27 @@ public class EnviarEmailService {
 
 	private SimpleMailMessage constructMail(String assunto, String corpo, String destinatario) {
 		SimpleMailMessage email = new SimpleMailMessage();
+		setSubject(email, assunto);
+		setText(email, corpo + "\n\n\nMensagem enviada automaticamente. Por favor, n„o responder." + "\nEquipe Contest");
+		setTo(email, destinatario);
+		setFrom(email);
+		return email;
+	}
+	
+	private SimpleMailMessage setSubject(SimpleMailMessage email, String assunto) {
 		email.setSubject(assunto);
-		email.setText(corpo + "\n\n\nMensagem enviada automaticamente. Por favor, n√£o responder." + "\nEquipe Contest");
+		return email;
+	}
+	
+	private SimpleMailMessage setText(SimpleMailMessage email, String corpo) {
+		email.setText(corpo + "\n\n\nMensagem enviada automaticamente. Por favor, n„o responder." + "\nEquipe Contest");
+		return email;
+	}
+	private SimpleMailMessage setTo(SimpleMailMessage email, String destinatario) {
 		email.setTo(destinatario);
+		return email;
+	}
+	private SimpleMailMessage setFrom(SimpleMailMessage email) {
 		email.setFrom(from);
 		return email;
 	}
@@ -78,19 +96,34 @@ public class EnviarEmailService {
 
 	public String resetarSenhaEmail(@PathVariable("token") Token token, @RequestParam String senha,
 			@RequestParam String senhaConfirma, RedirectAttributes redirectAttributes) {
-		if (senha.equals(senhaConfirma)) {
+		if (validationPassword(senha, senhaConfirma)) {
 			Pessoa pessoa = token.getPessoa();
-			String password = pessoaService.encodePassword(senha);
-			pessoa.setPassword(password);
-			try {
-				pessoaService.addOrUpdate(pessoa);
-			} catch (ContestException e) {
-				logger.error(e.getMessage());
-			}
+			pessoa = encodePassword(pessoa, senha);
+			
+			updateUser(pessoa);
+			
 			tokenService.deletar(token);
 			redirectAttributes.addFlashAttribute("senhaRedefinida", true);
 		}
 		return "";
+	}
+	
+	private boolean validationPassword(String password, String passwordConfirm) {
+		return password.equals(passwordConfirm);
+	}
+	
+	private Pessoa encodePassword(Pessoa pessoa, String password) {
+		String passwordEncode = pessoaService.encodePassword(password);
+		pessoa.setPassword(passwordEncode);
+		return pessoa;
+	}
+	
+	private void updateUser(Pessoa pessoa) {
+		try {
+			pessoaService.addOrUpdate(pessoa);
+		} catch (ContestException e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 	public String esqueciSenhaEmail(@RequestParam String email, RedirectAttributes redirectAttributes, String url) {

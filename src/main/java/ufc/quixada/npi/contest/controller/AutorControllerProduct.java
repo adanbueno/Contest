@@ -17,6 +17,7 @@ import ufc.quixada.npi.contest.model.Evento;
 import ufc.quixada.npi.contest.model.Pessoa;
 import ufc.quixada.npi.contest.util.PessoaLogadaUtil;
 import ufc.quixada.npi.contest.util.Constants;
+import ufc.quixada.npi.contest.util.GetEvento;
 import ufc.quixada.npi.contest.model.Trabalho;
 import java.util.List;
 import ufc.quixada.npi.contest.model.Revisao;
@@ -72,7 +73,7 @@ public class AutorControllerProduct {
 				return Constants.TEMPLATE_REVISAO_AUTOR;
 			}
 			redirect.addFlashAttribute("revisao_inexistente", messageService.getMessage("REVISAO_INEXISTENTE"));
-			return "redirect:/autor/listarTrabalhos/" + evento.getId();
+			return "redirect:/autor/listarTrabalhos/" + GetEvento.getId(evento);
 		}
 		return AutorController.AUTOR_SEM_PERMISSAO_REVISAO;
 	}
@@ -121,10 +122,15 @@ public class AutorControllerProduct {
 	public Submissao configuraSubmissao(Submissao submissao, Evento evento) {
 		submissao.setDataSubmissao(new Date(System.currentTimeMillis()));
 		if (evento.isPeriodoSubmissao()) {
-			submissao.setTipoSubmissao(TipoSubmissao.PARCIAL);
+			submissao = setTipoSubmissao(submissao, TipoSubmissao.PARCIAL);
 		} else if (evento.isPeriodoFinal()) {
-			submissao.setTipoSubmissao(TipoSubmissao.FINAL);
+			submissao = setTipoSubmissao(submissao, TipoSubmissao.FINAL);
 		}
+		return submissao;
+	}
+	
+	private Submissao setTipoSubmissao(Submissao submissao, TipoSubmissao tipoSubmissao) {
+		submissao.setTipoSubmissao(tipoSubmissao);
 		return submissao;
 	}
 

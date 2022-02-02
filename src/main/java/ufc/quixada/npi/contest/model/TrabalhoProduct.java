@@ -4,10 +4,33 @@ package ufc.quixada.npi.contest.model;
 import java.util.List;
 
 public class TrabalhoProduct {
+	private Avaliacao APROVADO = Avaliacao.APROVADO;
+	private Avaliacao RESSALVAS = Avaliacao.RESSALVAS;
+	private Avaliacao REPROVADO = Avaliacao.REPROVADO;
+	private Avaliacao NAO_REVISADO = Avaliacao.NAO_REVISADO;
+	
 	private List<Revisao> revisoes;
 
 	public List<Revisao> getRevisoes() {
 		return revisoes;
+	}
+	
+	public Revisao getRevisao(Pessoa revisor) {
+		for (Revisao revisao : this.revisoes) {
+			if (revisao.getRevisor().equals(revisor)) {
+				return revisao;
+			}
+		}
+		return null;
+	}
+	
+	public boolean isRevisor(Pessoa pessoa) {
+		for (Revisao revisao : this.revisoes) {
+			if (revisao.getRevisor().equals(pessoa)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setRevisoes(List<Revisao> revisoes) {
@@ -31,7 +54,7 @@ public class TrabalhoProduct {
 			return false;
 		}
 		for (Revisao revisao : this.revisoes) {
-			if (!isRevisado() || !revisao.getAvaliacao().equals(Avaliacao.APROVADO)) {
+			if (!isRevisado() || !revisao.getAvaliacao().equals(APROVADO)) {
 				return false;
 			}
 		}
@@ -43,7 +66,7 @@ public class TrabalhoProduct {
 			return false;
 		}
 		for (Revisao revisao : this.revisoes) {
-			if (isRevisado() && revisao.getAvaliacao().equals(Avaliacao.REPROVADO)) {
+			if (isRevisado() && revisao.getAvaliacao().equals(REPROVADO)) {
 				return true;
 			}
 		}
@@ -55,8 +78,8 @@ public class TrabalhoProduct {
 			return false;
 		}
 		for (Revisao revisao : this.revisoes) {
-			if (isRevisado() && !revisao.getAvaliacao().equals(Avaliacao.REPROVADO)
-					&& revisao.getAvaliacao().equals(Avaliacao.RESSALVAS)) {
+			if (isRevisado() && !revisao.getAvaliacao().equals(REPROVADO)
+					&& revisao.getAvaliacao().equals(RESSALVAS)) {
 				return true;
 			}
 		}
@@ -64,9 +87,9 @@ public class TrabalhoProduct {
 	}
 
 	public Avaliacao getResultado() {
-		return isAprovado() ? Avaliacao.APROVADO
-				: isAprovadoComRessalvas() ? Avaliacao.RESSALVAS
-						: isReprovado() ? Avaliacao.REPROVADO : Avaliacao.NAO_REVISADO;
+		return isAprovado() ? APROVADO
+				: isAprovadoComRessalvas() ? RESSALVAS
+						: isReprovado() ? REPROVADO : NAO_REVISADO;
 	}
 
 	public boolean isBestPaper() {

@@ -43,6 +43,7 @@ public class PessoaValidator implements Validator{
 	
 	private String getNome(Pessoa pessoa) {
 		return pessoa.getNome();
+
 	}
 
 }

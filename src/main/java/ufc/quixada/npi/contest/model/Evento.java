@@ -146,6 +146,25 @@ public class Evento {
 		this.inicioSubmissao = inicioSubmissao;
 	}
 
+	public Date getUltimoDiaSubmissaoInicial() {
+		Calendar c = Calendar.getInstance();
+		setTime(c);
+		addCalendario(c, Calendar.DAY_OF_MONTH);
+		return getTimeCalendario(c);
+	}
+	
+	private void setTime(Calendar c) {
+		 c.setTime(terminoSubmissao);
+	}
+	
+	private void addCalendario(Calendar c, int day) {
+		 c.add(day, -1);
+	}
+	
+	private Date getTimeCalendario(Calendar c) {
+		return c.getTime();
+	}
+
 	public Date getCameraReady() {
 		return cameraReady;
 	}

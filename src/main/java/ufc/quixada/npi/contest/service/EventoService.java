@@ -60,22 +60,21 @@ public class EventoService {
 	
 	public void periodoSubimissao(Evento evento) throws ContestException {
 		if (evento.getTerminoSubmissao().before(evento.getInicioSubmissao())){
-			throw new ContestException("O término da submissão deve ser posterior ao início da submissão");
+			throw new ContestException("O t�rmino da submiss�o deve ser posterior ao in�cio da submiss�o");
 
 		}
 	}
 	
 	public void prazoNotificao(Evento evento) throws ContestException {
 		if (!evento.getPrazoNotificacao().after(evento.getTerminoSubmissao())) {
-			throw new ContestException("O prazo de notificação deve ser posterior ao término de submissão");
-
+			throw new ContestException("O prazo de notifica��o deve ser posterior ao t�rmino de submiss�o");
 
 		}
 	}
 	
 	public void cameraReady(Evento evento) throws ContestException {
 		if (!evento.getCameraReady().after(evento.getPrazoNotificacao())) {
-			throw new ContestException("O camera ready deve ser posterior ao prazo de notificação");
+			throw new ContestException("O camera ready deve ser posterior ao prazo de notifica��o");
 
 		}
 	}
@@ -203,7 +202,6 @@ public class EventoService {
 		}
 
 		emailService.enviarEmail("Contest", "Equipe de organização", GetPessoa.getEmail(pessoa), "Você foi incluído(a) na equipe de organização do evento \"" + evento.getNome() + "\"");
-
 	}
 
 	public void excluirOrganizador(Evento evento, Pessoa pessoa) {

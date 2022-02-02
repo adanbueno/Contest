@@ -146,7 +146,6 @@ public class Evento {
 		this.inicioSubmissao = inicioSubmissao;
 	}
 
-
 	public Date getUltimoDiaSubmissaoInicial() {
 		Calendar c = Calendar.getInstance();
 		setTime(c);

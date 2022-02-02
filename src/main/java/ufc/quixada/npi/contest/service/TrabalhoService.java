@@ -176,10 +176,6 @@ public class TrabalhoService {
 		List<Revisao> revisoes = trabalhoProduct.getRevisoes();
 		StringBuilder bld = new StringBuilder();
 		for (Revisao revisao : revisoes) {
-
-
-			conteudo = revisao.getConteudo().substring(1, revisao.getConteudo().length() - 1);
-
 			bld.append("REVISOR : " + revisao.getRevisor().getNome().toUpperCase() + " , TRABALHO: "
 					+ trabalho.getId().toString());
 

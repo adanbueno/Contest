@@ -1,7 +1,3 @@
-<div align="center">
-   <img alt="Logo contest" src="./docs/assets/logotipo.png" style="height: 200px;">
-</div>
-
 ## Sobre o Projeto
 Contest é um sistema da Universidade Federal do Ceará do campus de Quixadá, para controle de eventos, submisões de trabalhos academicos e envio de certificações
 

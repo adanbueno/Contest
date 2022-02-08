@@ -75,5 +75,3 @@ Como resultado final das métricas de inferência da qualidade do software, pode
 </div>
 </br> </br>
 
-## Analise mais detalhada do experimento
-<a href="./docs/Relatorio Contest - Qualidade Software - Entrega final.pdf">Relatorio das refatorações</a>
